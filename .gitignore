@@ -114,3 +114,7 @@ package-lock.json
 
 # examples
 example.webp
+example.png
+
+# Ignore Rust build files
+target

@@ -18,20 +18,25 @@
 export function initEmscriptenModule<T extends EmscriptenWasm.Module>(
   moduleFactory: EmscriptenWasm.ModuleFactory<T>,
   wasmModule?: WebAssembly.Module,
+  moduleOptionOverrides: Partial<EmscriptenWasm.ModuleOpts> = {},
 ): Promise<T> {
   let instantiateWasm;
 
   if (wasmModule) {
-    instantiateWasm = (imports: WebAssembly.Imports, callback: (instance: WebAssembly.Instance) => void) => {
+    instantiateWasm = (
+      imports: WebAssembly.Imports,
+      callback: (instance: WebAssembly.Instance) => void,
+    ) => {
       const instance = new WebAssembly.Instance(wasmModule, imports);
       callback(instance);
       return instance.exports;
-    }
+    };
   }
 
   return moduleFactory({
     // Just to be safe, don't automatically invoke any wasm functions
     noInitialRun: true,
-    instantiateWasm
+    instantiateWasm,
+    ...moduleOptionOverrides,
   });
 }

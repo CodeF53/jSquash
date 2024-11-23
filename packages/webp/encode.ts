@@ -17,23 +17,34 @@
  * The WebP options are defaulted to defaults from the meta.ts file.
  * Also manually allow instantiation of the Wasm Module.
  */
-import type { WebPModule } from './codec/enc/webp_enc';
-import type { EncodeOptions } from './meta';
+import type { WebPModule } from './codec/enc/webp_enc.js';
+import type { EncodeOptions } from './meta.js';
 
-import { defaultOptions } from './meta';
-import { initEmscriptenModule } from './utils';
+import { defaultOptions } from './meta.js';
+import { initEmscriptenModule } from './utils.js';
 import { simd } from 'wasm-feature-detect';
 
 let emscriptenModule: Promise<WebPModule>;
 
-export async function init(module?: WebAssembly.Module): Promise<WebPModule> {
+export async function init(
+  module?: WebAssembly.Module,
+  moduleOptionOverrides?: Partial<EmscriptenWasm.ModuleOpts>,
+): Promise<WebPModule> {
   if (await simd()) {
-    const webpEncoder = await import('./codec/enc/webp_enc_simd');
-    emscriptenModule = initEmscriptenModule(webpEncoder.default, module);
+    const webpEncoder = await import('./codec/enc/webp_enc_simd.js');
+    emscriptenModule = initEmscriptenModule(
+      webpEncoder.default,
+      module,
+      moduleOptionOverrides,
+    );
     return emscriptenModule;
   }
-  const webpEncoder = await import('./codec/enc/webp_enc');
-  emscriptenModule = initEmscriptenModule(webpEncoder.default, module);
+  const webpEncoder = await import('./codec/enc/webp_enc.js');
+  emscriptenModule = initEmscriptenModule(
+    webpEncoder.default,
+    module,
+    moduleOptionOverrides,
+  );
   return emscriptenModule;
 }
 

@@ -4,7 +4,7 @@
 
 An easy experience for encoding and decoding JPEG XL images in the browser. Powered by WebAssembly ⚡️.
 
-⚠️ No stable browser release supports displaying JPEG XL yet. This package is intended for experimentation and testing.
+⚠️ Only one stable browser supports displaying JPEG XL [so far](https://caniuse.com/jpegxl). This package is intended for experimentation and testing.
 
 Uses the [libjxl](https://github.com/libjxl/libjxl) library.
 
@@ -83,6 +83,18 @@ import decode, { init as initJXLDecode } from '@jsquash/jxl/decode';
 
 initJXLDecode(WASM_MODULE); // The `WASM_MODULE` variable will need to be sourced by yourself and passed as an ArrayBuffer.
 const image = await fetch('./image.jpeg').then(res => res.arrayBuffer()).then(decode);
+```
+
+You can also pass custom options to the `init` function to customise the behaviour of the module. See the [Emscripten documentation](https://emscripten.org/docs/api_reference/module.html#Module) for more information.
+
+```js
+import decode, { init as initJXLDecode } from '@jsquash/jxl/decode';
+
+initJXLDecode(null, {
+  // Customise the path to load the wasm file
+  locateFile: (path, prefix) => `https://example.com/${prefix}/${path}`,
+});
+const image = await fetch('./image.jxl').then(res => res.arrayBuffer()).then(decode);
 ```
 
 ## Known Issues

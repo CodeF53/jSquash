@@ -16,15 +16,22 @@
  * and modified it to decode JPEG images.
  */
 
-import type { AVIFModule } from './codec/dec/avif_dec';
-import { initEmscriptenModule } from './utils';
+import type { AVIFModule } from './codec/dec/avif_dec.js';
+import { initEmscriptenModule } from './utils.js';
 
-import avif_dec from './codec/dec/avif_dec';
+import avif_dec from './codec/dec/avif_dec.js';
 
 let emscriptenModule: Promise<AVIFModule>;
 
-export async function init(module?: WebAssembly.Module): Promise<void> {
-  emscriptenModule = initEmscriptenModule(avif_dec, module);
+export async function init(
+  module?: WebAssembly.Module,
+  moduleOptionOverrides?: Partial<EmscriptenWasm.ModuleOpts>,
+): Promise<void> {
+  emscriptenModule = initEmscriptenModule(
+    avif_dec,
+    module,
+    moduleOptionOverrides,
+  );
 }
 
 export default async function decode(buffer: ArrayBuffer): Promise<ImageData> {
